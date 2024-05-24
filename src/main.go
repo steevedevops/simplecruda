@@ -1,14 +1,21 @@
 package main
 
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/steevedevops/simplecruda/src/db"
+	"github.com/steevedevops/simplecruda/src/routes"
+)
+
 func main() {
+	r := gin.Default()
+	dbServer := db.NewDBserver("webmaster", "pgsql.dev", "localhost", "simplecruda", 5433)
+	err := dbServer.Open()
 
-	// err := db.InitDB("webmaster", "pgsql.dev", "localhost", "simplecruda", 5433)
+	if err != nil {
+		panic(err)
+	}
 
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// // user.CreateUserLoginController(db)
-	// user.BuscarUsuarioController()
+	routes.Routes(r)
+	r.Run(":8000")
 
 }
