@@ -15,32 +15,53 @@ type User struct {
 }
 
 func (us *User) FetchUser(search string) ([]User, error) {
+	conn, err := db.OpenConnection()
+	if err != nil {
+		return nil, fmt.Errorf("Nao foi possivel conectar com o banco de dados %v", err)
+	}
+	defer conn.Close()
 	users := []User{}
 
-	err := db.DBX.Select(&users, "SELECT * FROM users")
+	rows, err := conn.Query("SELECT * FROM users")
 	if err != nil {
 		return nil, err
 	}
+
+	for rows.Next() {
+		var user User
+		err = rows.Scan(&user)
+		if err != nil {
+			fmt.Errorf("Nao foi possivel pegar o dados %v", err)
+		}
+		users = append(users, user)
+	}
+
 	return users, nil
 }
 
 func (us *User) FetchUserById(id int64) (*User, error) {
+	// conn, err := db.OpenConnection()
+	// if err != nil {
+	// 	return nil, fmt.Errorf("Nao foi possivel conectar com o banco de dados %v", err)
+	// }
+	// defer conn.Close()
+
 	user := &User{}
 
-	err := db.DBX.Get(&user, "SELECT * FROM users where id = ? ", id)
-	if err != nil {
-		return user, fmt.Errorf("fetchStudents %v", err)
-	}
+	// rows, err := conn.QueryRow("SELECT * FROM users limit 1 ")
+	// if err != nil {
+	// 	return user, fmt.Errorf("fetchStudents %v", err)
+	// }
 	return user, nil
 }
 
 func (us *User) CreatUser(user User) (*User, error) {
-	query := "insert into users (username, firstname, lastname, email) values (?,?,?,?);"
-	result := db.DBX.MustExec(query, user.Username, user.Firstname, user.Lastname, user.Email)
-	id, err := result.LastInsertId()
-	if err != nil {
-		return nil, err
-		// return nil, fmt.Errorf("addUser Error: %v", err)
-	}
-	return us.FetchUserById(id)
+	// query := "insert into users (username, firstname, lastname, email) values (?,?,?,?);"
+	// result := db.DBX.MustExec(query, user.Username, user.Firstname, user.Lastname, user.Email)
+	// id, err := result.LastInsertId()
+	// if err != nil {
+	// 	return nil, err
+	// 	// return nil, fmt.Errorf("addUser Error: %v", err)
+	// }
+	return us.FetchUserById(0)
 }

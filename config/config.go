@@ -1,6 +1,11 @@
 package config
 
-import "github.com/dvln/viper"
+import (
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+)
 
 var cfg *config
 
@@ -17,43 +22,38 @@ type DBConfig struct {
 	User   string
 	Pass   string
 	Host   string
-	Port   int
+	Port   string
 	DBname string
 }
 
 // funcoa de ciclo de vida de golang
 // para definir valores default
 // viper
-func init() {
-	viper.SetDefault("api.port", "9000")
-	viper.SetDefault("database.host", "localhost")
-	viper.SetDefault("database.port", "5433")
-}
+// func init() {
+// 	viper.SetDefault("API_PORT", "9000")
+// 	viper.SetDefault("DB_HOST", "localhost")
+// 	viper.SetDefault("DB_PORT", "5433")
+// }
 
 func Load() error {
-	viper.SetConfigName("config")
-	viper.SetConfigType("toml")
-	viper.SetConfigType(".")
-
-	err := viper.ReadInConfig()
+	// load .env file
+	err := godotenv.Load(".env")
 
 	if err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			return err
-		}
+		log.Fatalln("Error loading .env file")
 	}
 	cfg = &config{}
 
 	cfg.API = APIConfig{
-		Port: viper.GetString("api.port"),
+		Port: getEnv("API_PORT", "9000"),
 	}
 
 	cfg.DB = DBConfig{
-		Host:   viper.GetString("database.host"),
-		Port:   viper.GetInt("database.port"),
-		User:   viper.GetString("database.user"),
-		Pass:   viper.GetString("database.pass"),
-		DBname: viper.GetString("database.dbname"),
+		Host:   getEnv("DB_HOST", "localhost"),
+		Port:   getEnv("DB_PORT", "5433"),
+		User:   getEnv("DB_USER", ""),
+		Pass:   getEnv("DB_PASS", ""),
+		DBname: getEnv("DB_NAME", ""),
 	}
 	return nil
 }
@@ -65,4 +65,12 @@ func GetDBConfig() DBConfig {
 
 func GetServerPort() string {
 	return cfg.API.Port
+}
+
+func getEnv(key, defaultValue string) string {
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return defaultValue
+	}
+	return value
 }

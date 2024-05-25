@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/steevedevops/simplecruda/src/db"
 )
 
 func CreateUserHandler(ctx *gin.Context) {
@@ -23,7 +22,6 @@ func CreateUserHandler(ctx *gin.Context) {
 	// 		"status":  http.StatusBadRequest,
 	// 	})
 	// }
-	db.DBX.Close()
 	ctx.JSON(http.StatusCreated, gin.H{
 		"usuario": "OK",
 		// "usuario": userCreated,

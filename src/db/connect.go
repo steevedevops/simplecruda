@@ -12,7 +12,7 @@ import (
 func OpenConnection() (*sql.DB, error) {
 	conf := config.GetDBConfig()
 
-	connString := fmt.Sprintf("user=%s password=%s host=%s port=%d dbname=%s sslmode=disable", conf.User, conf.Pass, conf.Host, conf.Port, conf.DBname)
+	connString := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable", conf.User, conf.Pass, conf.Host, conf.Port, conf.DBname)
 
 	conn, err := sql.Open("postgres", connString)
 
