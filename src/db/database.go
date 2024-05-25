@@ -45,12 +45,3 @@ func (ds *DBserver) Open() error {
 	log.Printf("DB: `%s` conectado com sucesso", ds.DBname)
 	return nil
 }
-
-// Close closes the database connection.
-// func (s *sqlxDB) Close() error {
-// 	return s.db.Close()
-// }
-
-// func (s *sqlxDB) QueryX(query string) (*sqlx.Rows, error) {
-// 	return s.db.Queryx(query)
-// }
