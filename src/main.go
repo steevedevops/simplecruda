@@ -15,7 +15,6 @@ func main() {
 		log.Fatal(err)
 	}
 	r := gin.Default()
-
 	// dbServer := db.NewDBserver("webmaster", "pgsql.dev", "localhost", "simplecruda", 5433)
 	// err := dbServer.Open()
 
