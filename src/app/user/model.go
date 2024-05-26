@@ -7,7 +7,7 @@ import (
 )
 
 type User struct {
-	ID        int
+	ID        int    `bun:", pk,autoincrement"`
 	Username  string `form:"username" binding:"required"`
 	Firstname string `form:"firstname" binding:"required"`
 	Lastname  string `form:"lastname"`
@@ -15,25 +15,30 @@ type User struct {
 }
 
 func (us *User) FetchUser(search string) ([]User, error) {
-	conn, err := db.OpenConnection()
+	db, ctx, err := db.OpenConnection()
 	if err != nil {
 		return nil, fmt.Errorf("Nao foi possivel conectar com o banco de dados %v", err)
 	}
-	defer conn.Close()
+	defer db.Close()
 	users := []User{}
 
-	rows, err := conn.Query("SELECT * FROM users")
-	if err != nil {
-		return nil, err
-	}
+	if search != "" {
 
-	for rows.Next() {
-		var user User
-		err = rows.Scan(&user)
-		if err != nil {
-			fmt.Errorf("Nao foi possivel pegar o dados %v", err)
+		if err := db.NewSelect().
+			Model(&users).
+			Where("username = ?", search).
+			OrderExpr("id ASC").
+			Scan(ctx); err != nil {
+			return nil, err
 		}
-		users = append(users, user)
+	} else {
+
+		if err := db.NewSelect().
+			Model(&users).
+			OrderExpr("id ASC").
+			Scan(ctx); err != nil {
+			return nil, err
+		}
 	}
 
 	return users, nil
@@ -56,12 +61,18 @@ func (us *User) FetchUserById(id int64) (*User, error) {
 }
 
 func (us *User) CreatUser(user User) (*User, error) {
-	// query := "insert into users (username, firstname, lastname, email) values (?,?,?,?);"
-	// result := db.DBX.MustExec(query, user.Username, user.Firstname, user.Lastname, user.Email)
-	// id, err := result.LastInsertId()
-	// if err != nil {
-	// 	return nil, err
-	// 	// return nil, fmt.Errorf("addUser Error: %v", err)
-	// }
-	return us.FetchUserById(0)
+	db, ctx, err := db.OpenConnection()
+	if err != nil {
+		return nil, err
+		// return nil, fmt.Errorf("Nao foi possivel conectar com o banco de dados %v", err)
+	}
+	defer db.Close()
+
+	_, err = db.NewInsert().Model(&user).Exec(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }

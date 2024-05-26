@@ -4,5 +4,8 @@ build:
 run: build
 	@./bin/simple_crud
 
+tidy:
+	@go mod tidy
+
 test:
 	@go test -v ./...
