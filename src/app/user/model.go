@@ -66,6 +66,7 @@ func (us *User) FetchUserById(id int64) (*User, error) {
 
 func (us *User) CreatUser(user User) (*User, error) {
 	ctx := utils.GetContext()
+
 	// db, ctx, err := db.OpenConnection()
 	// if err != nil {
 	// 	return nil, err

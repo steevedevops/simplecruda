@@ -25,7 +25,6 @@ func OpenConnection() (*bun.DB, error) {
 	if err != nil {
 		return nil, nil
 	}
-
 	Instance = bun.NewDB(sqldbconn, pgdialect.New())
 	Instance.AddQueryHook(bundebug.NewQueryHook(
 		bundebug.WithVerbose(true),
