@@ -1,22 +1,21 @@
 package post
 
 import (
-	"database/sql"
 	"fmt"
-	"os/user"
 	"time"
 
 	"github.com/steevedevops/simplecruda/src/db"
 )
 
 type Post struct {
-	ID          int    `bun:", pk,autoincrement"`
-	Title       string `form:"title" binding:"required"`
-	Description string `form:"description" binding:"required"`
-	CreatedAt   time.Time
-	UpdatedAt   sql.NullTime
-	OwnerID     int64      `yaml:"owner_id"`
-	Owner       *user.User `bun:"rel:belongs-to"`
+	ID          int       `bun:",pk,autoincrement"`
+	Title       string    `bun:"type:varchar(150)"`
+	Description string    `bun:"type:varchar(255)"`
+	CreatedAt   time.Time `bun:",nullzero,notnull,default:current_timestamp"`
+	UpdatedAt   time.Time `bun:",nullzero,notnull,default:current_timestamp"`
+	// UpdatedAt   sql.NullTime https://bun.uptrace.dev/guide/models.html#automatic-timestamps
+	// UserID int64
+	// User   *user.User `bun:"rel:belongs-to,join:user_id=id"`
 }
 
 func (ps *Post) FetchPost(search string) ([]Post, error) {

@@ -11,21 +11,24 @@ test:
 	@go test -v ./...
 
 # db operations
+initmigrations: # cria as tabelas de migracao iniciais 
+	@go run src/main.go db init
+
 migrations:
 	@go run src/main.go db migrate
 
-migrationsback:
+rollbackmigrations:
 	@go run src/main.go db rollback
 
-migrationsstatus:
+statusmigrations:
 	@go run src/main.go db status
 
 # make createmigrationgo name_file=init
-createmigration_go:
+creategomigration:
 	@go run src/main.go db create_go $(name)
 
-createmigration_sql:
+createsqlmigration:
 	@go run src/main.go db create_sql $(name)
 
-migrationshelp:
+helpmigrations:
 	@go run src/main.go db

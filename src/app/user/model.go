@@ -8,7 +8,7 @@ import (
 
 type User struct {
 	// bun.BaseModel `bun:"table:users,alias:usr"`
-	ID        int    `bun:"id"`
+	ID        int    `bun:",pk"`
 	Username  string `bun:"username" form:"username" binding:"required"`
 	Firstname string `bun:"firstname" form:"firstname" binding:"required"`
 	Lastname  string `bun:"lastname" form:"lastname"`
