@@ -1,7 +1,6 @@
 package db
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 
@@ -12,44 +11,27 @@ import (
 	"github.com/uptrace/bun/extra/bundebug"
 )
 
+var Instance *bun.DB
+
 // just bun return
-func OpenConnection() (*bun.DB, context.Context, error) {
+func OpenConnection() (*bun.DB, error) {
+	if Instance != nil {
+		return Instance, nil
+	}
 	conf := config.GetDBConfig()
-
 	connString := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable", conf.User, conf.Pass, conf.Host, conf.Port, conf.DBname)
-
 	sqldbconn, err := sql.Open("postgres", connString)
 
 	if err != nil {
-		return nil, nil, err
+		return nil, nil
 	}
 
-	db := bun.NewDB(sqldbconn, pgdialect.New())
-	db.AddQueryHook(bundebug.NewQueryHook(
+	Instance = bun.NewDB(sqldbconn, pgdialect.New())
+	Instance.AddQueryHook(bundebug.NewQueryHook(
 		bundebug.WithVerbose(true),
 		bundebug.FromEnv("BUNDEBUG"),
 	))
 
-	errCheck := db.Ping()
-	ctx := context.Background()
-	return db, ctx, errCheck
+	errCheck := Instance.Ping()
+	return Instance, errCheck
 }
-
-// func OpenConnection() (*sql.DB, *bun.DB, error) {
-// 	conf := config.GetDBConfig()
-
-// 	connString := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable", conf.User, conf.Pass, conf.Host, conf.Port, conf.DBname)
-
-// 	sqldbconn, err := sql.Open("postgres", connString)
-
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	db := bun.NewDB(sqldbconn, pgdialect.New())
-
-// 	// errCheck := sqldbconn.Ping()
-// 	errCheck := db.Ping()
-// 	return sqldbconn, db, errCheck
-
-// }

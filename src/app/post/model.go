@@ -1,10 +1,7 @@
 package post
 
 import (
-	"fmt"
 	"time"
-
-	"github.com/steevedevops/simplecruda/src/db"
 )
 
 type Post struct {
@@ -19,11 +16,11 @@ type Post struct {
 }
 
 func (ps *Post) FetchPost(search string) ([]Post, error) {
-	db, _, err := db.OpenConnection()
-	if err != nil {
-		return nil, fmt.Errorf("Nao foi possivel conectar com o banco de dados %v", err)
-	}
-	defer db.Close()
+	// db, _, err := db.OpenConnection()
+	// if err != nil {
+	// 	return nil, fmt.Errorf("Nao foi possivel conectar com o banco de dados %v", err)
+	// }
+	// defer db.Close()
 
 	return []Post{}, nil
 

@@ -1,9 +1,8 @@
 package user
 
 import (
-	"fmt"
-
 	"github.com/steevedevops/simplecruda/src/db"
+	"github.com/steevedevops/simplecruda/src/shared/utils"
 )
 
 type User struct {
@@ -16,11 +15,12 @@ type User struct {
 }
 
 func (us *User) FetchUser(search string) ([]User, error) {
-	db, ctx, err := db.OpenConnection()
-	if err != nil {
-		return nil, fmt.Errorf("Nao foi possivel conectar com o banco de dados %v", err)
-	}
-	defer db.Close()
+	ctx := utils.GetContext()
+	// db, ctx, err := db.OpenConnection()
+	// if err != nil {
+	// 	return nil, fmt.Errorf("Nao foi possivel conectar com o banco de dados %v", err)
+	// }
+	// defer db.Close()
 
 	// err := db.NewCreateTable().Model((*User)(nil)).Exec(ctx)
 
@@ -28,7 +28,7 @@ func (us *User) FetchUser(search string) ([]User, error) {
 
 	if search != "" {
 
-		if err := db.NewSelect().
+		if err := db.Instance.NewSelect().
 			Model(&users).
 			Where("username = ?", search).
 			OrderExpr("id ASC").
@@ -37,7 +37,7 @@ func (us *User) FetchUser(search string) ([]User, error) {
 		}
 	} else {
 
-		if err := db.NewSelect().
+		if err := db.Instance.NewSelect().
 			Model(&users).
 			OrderExpr("id ASC").
 			Scan(ctx); err != nil {
@@ -65,18 +65,18 @@ func (us *User) FetchUserById(id int64) (*User, error) {
 }
 
 func (us *User) CreatUser(user User) (*User, error) {
-	db, ctx, err := db.OpenConnection()
-	if err != nil {
-		return nil, err
-		// return nil, fmt.Errorf("Nao foi possivel conectar com o banco de dados %v", err)
-	}
-	defer db.Close()
+	ctx := utils.GetContext()
+	// db, ctx, err := db.OpenConnection()
+	// if err != nil {
+	// 	return nil, err
+	// 	// return nil, fmt.Errorf("Nao foi possivel conectar com o banco de dados %v", err)
+	// }
+	// defer db.Close()
 
-	_, err = db.NewInsert().Model(&user).Exec(ctx)
-
-	if err != nil {
-		return nil, err
-	}
+	db.Instance.NewInsert().Model(&user).Exec(ctx)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return &user, nil
 }

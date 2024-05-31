@@ -21,11 +21,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	db, _, err := db.OpenConnection()
+	db, err := db.OpenConnection()
 	if err != nil {
 		log.Fatal("Não foi possivel fazer a primeira conexao com o banco de dados")
 	}
-	// defer db.Close()
+	defer db.Close()
 
 	app := &cli.App{
 		Name: "bun",
