@@ -7,11 +7,12 @@ import (
 )
 
 type User struct {
-	ID        int    `bun:", pk,autoincrement"`
-	Username  string `form:"username" binding:"required"`
-	Firstname string `form:"firstname" binding:"required"`
-	Lastname  string `form:"lastname"`
-	Email     string `form:"email" binding:"required"`
+	// bun.BaseModel `bun:"table:users,alias:usr"`
+	ID        int    `bun:"id"`
+	Username  string `bun:"username" form:"username" binding:"required"`
+	Firstname string `bun:"firstname" form:"firstname" binding:"required"`
+	Lastname  string `bun:"lastname" form:"lastname"`
+	Email     string `bun:"email" form:"email" binding:"required"`
 }
 
 func (us *User) FetchUser(search string) ([]User, error) {
@@ -20,6 +21,9 @@ func (us *User) FetchUser(search string) ([]User, error) {
 		return nil, fmt.Errorf("Nao foi possivel conectar com o banco de dados %v", err)
 	}
 	defer db.Close()
+
+	// err := db.NewCreateTable().Model((*User)(nil)).Exec(ctx)
+
 	users := []User{}
 
 	if search != "" {

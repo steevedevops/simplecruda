@@ -2,8 +2,11 @@ package post
 
 import (
 	"database/sql"
+	"fmt"
 	"os/user"
 	"time"
+
+	"github.com/steevedevops/simplecruda/src/db"
 )
 
 type Post struct {
@@ -14,6 +17,17 @@ type Post struct {
 	UpdatedAt   sql.NullTime
 	OwnerID     int64      `yaml:"owner_id"`
 	Owner       *user.User `bun:"rel:belongs-to"`
+}
+
+func (ps *Post) FetchPost(search string) ([]Post, error) {
+	db, _, err := db.OpenConnection()
+	if err != nil {
+		return nil, fmt.Errorf("Nao foi possivel conectar com o banco de dados %v", err)
+	}
+	defer db.Close()
+
+	return []Post{}, nil
+
 }
 
 // func (us *Post) FetchUser(search string) ([]Post, error) {
